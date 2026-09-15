@@ -87,7 +87,7 @@ class MainActivity: AppCompatActivity() {
         TXVMessage.text = getString(R.string.messagedisorder)
     }
     private fun verifyTablero() {
-        var flag = true
+        /*var flag = true
         var cont = 1
 
         for (i in 0 until rows) {
@@ -104,8 +104,52 @@ class MainActivity: AppCompatActivity() {
                     }
                     cont++
                 }
+            }*/
+        val recorridoEspiral = mutableListOf<String>()
+
+        var filaInicio = 0
+        var filaFin = rows - 1
+        var colInicio = 0
+        var colFin = cols - 1
+
+        // 1. Leer el tablero siguiendo la ruta de la espiral
+        while (filaInicio <= filaFin && colInicio <= colFin) {
+            // De izquierda a derecha
+            for (j in colInicio..colFin) {
+                recorridoEspiral.add(Tablero[filaInicio][j])
+            }
+            filaInicio++
+
+            // De arriba hacia abajo
+            for (i in filaInicio..filaFin) {
+                recorridoEspiral.add(Tablero[i][colFin])
+            }
+            colFin--
+
+            // De derecha a izquierda
+            if (filaInicio <= filaFin) {
+                for (j in colFin downTo colInicio) {
+                    recorridoEspiral.add(Tablero[filaFin][j])
+                }
+                filaFin--
+            }
+
+            // De abajo hacia arriba
+            if (colInicio <= colFin) {
+                for (i in filaFin downTo filaInicio) {
+                    recorridoEspiral.add(Tablero[i][colInicio])
+                }
+                colInicio++
             }
         }
+
+        // 2. Crear la lista con la solución esperada: ["1", "2", ..., "15", ""]
+        val solucionGanadora = (1..15).map { it.toString() }.toMutableList().apply { add("") }
+
+        // 3. Comparar si el estado actual es igual a la solución ganadora
+        val flag = recorridoEspiral == solucionGanadora
+
+
 
         if (flag) {
             TXVMessage.text = getString(R.string.messageverifyWin)
@@ -115,7 +159,7 @@ class MainActivity: AppCompatActivity() {
     }
     private fun initialTable() {
         var cont = 1
-        for(i in 0 until rows)
+        /*for(i in 0 until rows)
         {
             for(j in 0 until cols)
             {
@@ -129,7 +173,49 @@ class MainActivity: AppCompatActivity() {
                     cont++
                 }
             }
+        }*/
+        val numeros = (1..15).toMutableList()
+        var filaInicio = 0
+        var filaFin = 3
+        var colInicio = 0
+        var colFin = 3
+
+        var index = 0
+
+        // 4. Lógica de llenado en espiral
+        while (filaInicio <= filaFin && colInicio <= colFin) {
+
+            for (j in colInicio..colFin) {
+                // Si ya usamos los 15 números, ponemos el 0 en la última posición restante
+                Tablero[filaInicio][j] = if (index < 15) numeros[index++].toString() else ""
+            }
+            filaInicio++
+
+            // De arriba hacia abajo
+            for (i in filaInicio..filaFin) {
+                Tablero[i][colFin] = if (index < 15) numeros[index++].toString() else ""
+            }
+            colFin--
+
+            // De derecha a izquierda
+            if (filaInicio <= filaFin) {
+                for (j in colFin downTo colInicio) {
+                    Tablero[filaFin][j] = if (index < 15) numeros[index++].toString() else ""
+                }
+                filaFin--
+            }
+
+            // De abajo hacia arriba
+            if (colInicio <= colFin) {
+                for (i in filaFin downTo filaInicio) {
+                    Tablero[i][colInicio] = if (index < 15) numeros[index++].toString() else ""
+                }
+                colInicio++
+            }
         }
+
+
+
         actualizeButtons()
     }
     private fun change(number: Int) {
