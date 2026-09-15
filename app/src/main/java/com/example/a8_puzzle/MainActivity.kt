@@ -48,15 +48,71 @@ class MainActivity: AppCompatActivity() {
                 change(number)
             }
         }
-    }
 
-    private fun paintButtons() {
-        for(number in BTNButtons.indices){
-            BTNButtons[number].setBackgroundColor(getColor(R.color.green_700))
+        BTNRestart.setOnClickListener {
+            restartTablero()
+        }
+
+        BTNDisorder.setOnClickListener {
+            disorderTablero()
+        }
+
+        BTNVerify.setOnClickListener {
+            verifyTablero()
         }
     }
+    private fun restartTablero() {
+        initialTable()
+        TXVMessage.text=getString(R.string.messageRestart)
+    }
+    private fun disorderTablero(){
+        val elements = mutableListOf<String>()
 
+        for (i in 1..15) {
+            elements.add(i.toString())
+        }
+        elements.add("")
 
+        elements.shuffle()
+
+        var num = 0
+        for (i in 0 until rows) {
+            for (j in 0 until cols) {
+                Tablero[i][j] = elements[num]
+                num++
+            }
+        }
+
+        actualizeButtons()
+        TXVMessage.text = getString(R.string.messagedisorder)
+    }
+    private fun verifyTablero() {
+        var flag = true
+        var cont = 1
+
+        for (i in 0 until rows) {
+            for (j in 0 until cols) {
+
+                if (i == rows - 1 && j == cols - 1) {
+                    if (Tablero[i][j].isNotEmpty()) {
+                        flag = false
+                    }
+                } else {
+
+                    if (Tablero[i][j] != cont.toString()) {
+                        flag = false
+                    }
+                    cont++
+                }
+            }
+        }
+
+        if (flag) {
+            TXVMessage.text = getString(R.string.messageverifyWin)
+        } else {
+            TXVMessage.text = getString(R.string.messageverifyNoWin)
+        }
+    }
     private fun initialTable() {
         var cont = 1
         for(i in 0 until rows)
@@ -76,7 +132,6 @@ class MainActivity: AppCompatActivity() {
         }
         actualizeButtons()
     }
-
     private fun change(number: Int) {
         val i = number/cols
         val j = number%rows
@@ -97,12 +152,12 @@ class MainActivity: AppCompatActivity() {
             }
         }
     }
-
     private fun actualizeButtons() {
         for (i in 0 until rows){
             for (j in 0 until cols){
                 val num=i*rows+j
                 BTNButtons[num].text=Tablero[i][j]
+                //Aquí hago invisible al boton vacío
                 if(Tablero[i][j].isEmpty()){
                     BTNButtons[num].visibility= View.INVISIBLE
                 }else{
@@ -112,4 +167,10 @@ class MainActivity: AppCompatActivity() {
         }
     }
 
+    //Aquí repinto los botones
+    private fun paintButtons() {
+        for(number in BTNButtons.indices){
+            BTNButtons[number].setBackgroundColor(getColor(R.color.green_700))
+        }
+    }
 }
